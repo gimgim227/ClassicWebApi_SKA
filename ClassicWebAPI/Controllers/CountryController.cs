@@ -31,7 +31,7 @@ namespace ClassicWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Map(string country)
         {
-            var countryInfo = await _countryService.GetCountry(country);
+            var countryInfo = await _countryService.GetMapByCountryName(country);
             var googleMapUrl = countryInfo.Map.GoogleMap;
 
             return Redirect(googleMapUrl);
@@ -40,13 +40,17 @@ namespace ClassicWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetCountryBySubRegion([FromBody] SubRegionRequest request)
         {
-            var countryInfoList = await _countryService.GetRegionCountry(request.SubRegion);
+            var countriesNames = await _countryService.GetCountryNamesBySubRegion(request.SubRegion);
+            if (countriesNames == null)
+            {
+                return Ok("Country Not Found");
+            }
 
-            SubRegionResult result = new SubRegionResult();
-            result.SubRegion = request.SubRegion;
-            result.Countries = countryInfoList.Select(x => x.CountryName.Common).ToList();
-
-            return new JsonResult(result);
+            return Ok(new GetCountryBySubRegionResponse
+            {
+                SubRegion = request.SubRegion,
+                Countries = countriesNames
+            });
         }
     }
 }

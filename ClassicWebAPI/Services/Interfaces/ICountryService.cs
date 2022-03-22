@@ -7,7 +7,7 @@ namespace ClassicWebAPI.Services.Interfaces
     public interface ICountryService
     {
         Task<IEnumerable<CountryInfo>> GetAll();
-        Task<CountryInfo> GetCountry(string country);
-        Task<IEnumerable<CountryInfo>> GetRegionCountry(string subRegion);
+        Task<CountryInfo> GetMapByCountryName(string country);
+        Task<List<string>> GetCountryNamesBySubRegion(string subRegion);
     }
 }

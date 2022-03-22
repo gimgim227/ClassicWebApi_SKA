@@ -23,19 +23,20 @@ namespace ClassicWebAPI.Services
             var data = await httpResponseMessage.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<IEnumerable<CountryInfo>>(data);
         }
-        public async Task<CountryInfo> GetCountry(string country)
+        public async Task<CountryInfo> GetMapByCountryName(string country)
         {
             var httpResponseMessage = await _httpClientService.GetAsync("https://restcountries.com/v3.1/name/"+ country);
             if (!httpResponseMessage.IsSuccessStatusCode) return null;
             var data = await httpResponseMessage.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<IEnumerable<CountryInfo>>(data).FirstOrDefault();
         }
-        public async Task<IEnumerable<CountryInfo>> GetRegionCountry(string subRegion)
+        public async Task<List<string>> GetCountryNamesBySubRegion(string subRegion)
         {
             var httpResponseMessage = await _httpClientService.GetAsync("https://restcountries.com/v3.1/subregion/" + subRegion);
             if (!httpResponseMessage.IsSuccessStatusCode) return null;
             var data = await httpResponseMessage.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<CountryInfo>>(data);
+            var countryInfos = JsonConvert.DeserializeObject<IEnumerable<CountryInfo>>(data);
+            return countryInfos?.Select(x => x.CountryName.Common).ToList();
         }
     }
 }
